@@ -1,7 +1,7 @@
 # pylint: disable=invalid-name, function-redefined
 # mypy: disable-error-code="no-redef"
 from enum import Enum
-from typing import Literal
+from typing import Callable, Literal
 
 from pydantic import BaseModel
 
@@ -146,4 +146,9 @@ class SpecFile(BaseModel):
 SpecEvaluateBasicReturn = int | float | str | bool
 
 
-SpecEvaluateReturn = SpecEvaluateBasicReturn | tuple["SpecEvaluateReturn", "SpecEvaluateReturn"]
+SpecEvaluateReturn = (
+    SpecEvaluateBasicReturn
+    | tuple["SpecEvaluateReturn", "SpecEvaluateReturn"]
+    | Callable[[list["SpecEvaluateReturn"]], "SpecEvaluateReturn"]
+    | None
+)

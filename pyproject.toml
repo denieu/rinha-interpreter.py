@@ -66,6 +66,8 @@ disable = [
     "too-many-arguments",
     "too-many-branches",
     "too-many-statements",
+    "broad-exception-raised",  # TODO Remove
+    "too-many-return-statements",
 ]
 
 [tool.mypy]
