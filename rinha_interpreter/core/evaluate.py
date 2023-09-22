@@ -12,7 +12,7 @@ from rinha_interpreter.core.spec import (
     SpecStr,
     SpecTerm,
     SpecTuple,
-    SpecVar,
+    SpecVar, SpecBinaryOp,
 )
 
 
@@ -27,7 +27,78 @@ def evaluate(term: SpecTerm) -> int | tuple | None:
         pass
 
     elif isinstance(term, SpecBinary):
-        pass
+        spec_binary_lhs_result = evaluate(term.lhs)
+        spec_binary_rhs_result = evaluate(term.rhs)
+
+        spec_binary_operator = term.op
+        if spec_binary_operator == SpecBinaryOp.Add:
+            if isinstance(spec_binary_lhs_result, str) or isinstance(spec_binary_rhs_result, str):
+                return f"{spec_binary_lhs_result}{spec_binary_rhs_result}"
+
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result + spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Sub:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result - spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Mul:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result * spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Div:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result / spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Rem:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result % spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Eq:
+            return spec_binary_lhs_result == spec_binary_rhs_result
+
+        elif spec_binary_operator == SpecBinaryOp.Neq:
+            return spec_binary_lhs_result != spec_binary_rhs_result
+
+        elif spec_binary_operator == SpecBinaryOp.Lt:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result < spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Gt:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result > spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Lte:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result <= spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.Gte:
+            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
+                return spec_binary_lhs_result >= spec_binary_rhs_result
+
+            raise Exception("Operação binario invalida")
+
+        elif spec_binary_operator == SpecBinaryOp.And:
+            return spec_binary_lhs_result and spec_binary_rhs_result
+
+        elif spec_binary_operator == SpecBinaryOp.Or:
+            return spec_binary_lhs_result or spec_binary_rhs_result
 
     elif isinstance(term, SpecFunction):
         pass
@@ -36,7 +107,12 @@ def evaluate(term: SpecTerm) -> int | tuple | None:
         pass
 
     elif isinstance(term, SpecIf):
-        pass
+        spec_if_condition_result = evaluate(term.condition)
+
+        if spec_if_condition_result:
+            return evaluate(term.then)
+
+        return evaluate(term.otherwise)
 
     elif isinstance(term, SpecPrint):
         spec_print_result = evaluate(term.value)
