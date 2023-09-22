@@ -9,6 +9,9 @@ from typer import Exit
 class ExitCodesEnum(Enum):
     SUCCESS = 0
     GENERIC_ERROR = 1
+    JSON_FILE_NOT_FOUND = 2
+    INVALID_JSON_FILE = 3
+    INVALID_PARSED_AST = 4
 
 
 @lru_cache(maxsize=1)
