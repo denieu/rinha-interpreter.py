@@ -32,7 +32,7 @@ class SpecFunction(BaseModel):
 
 class SpecCall(BaseModel):
     kind: Literal["Call"]
-    calee: "SpecTerm"
+    callee: "SpecTerm"
     arguments: list["SpecTerm"]
     location: SpecLocation
 

@@ -4,7 +4,7 @@ from typer import Argument, Exit, Option, Typer
 
 from rinha_interpreter.__version__ import __version__
 from rinha_interpreter.core.cli import ExitCodesEnum, get_console, typer_exit
-from rinha_interpreter.core.evaluate import evaluate
+from rinha_interpreter.core.evaluate import evaluate, Variables
 from rinha_interpreter.core.parser import parse_ast
 
 app = Typer(
@@ -25,8 +25,9 @@ def main(
     _: Annotated[Optional[bool], Option("--version", help="Show CLI version", callback=version_callback, is_eager=True)] = None,
 ) -> None:
     ast = parse_ast(json_path)
+    variables = Variables()
 
-    evaluate(ast.expression)
+    evaluate(ast.expression, variables)
 
     raise typer_exit(ExitCodesEnum.SUCCESS)
 
