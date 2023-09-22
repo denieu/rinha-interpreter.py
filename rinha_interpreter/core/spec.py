@@ -13,12 +13,12 @@ class SpecLocation(BaseModel):
     filename: str
 
 
-class SpecParameter:
+class SpecParameter(BaseModel):
     text: str
     location: SpecLocation
 
 
-class SpecVar:
+class SpecVar(BaseModel):
     kind: str
     text: str
     location: SpecLocation
@@ -121,20 +121,21 @@ class SpecPrint(BaseModel):
     location: SpecLocation
 
 
-class SpecTerm(Enum):  # noqa
-    Int = SpecInt
-    Str = SpecStr
-    Call = SpecCall
-    Binary = SpecBinary
-    Function = SpecFunction
-    Let = SpecLet
-    If = SpecIf
-    Print = SpecPrint
-    First = SpecFirst
-    Second = SpecSecond
-    Bool = SpecBool
-    Tuple = SpecTuple
-    Var = SpecVar
+SpecTerm = (  # noqa
+    SpecInt
+    | SpecStr
+    | SpecCall
+    | SpecBinary
+    | SpecFunction
+    | SpecLet
+    | SpecIf
+    | SpecPrint
+    | SpecFirst
+    | SpecSecond
+    | SpecBool
+    | SpecTuple
+    | SpecVar
+)
 
 
 class SpecFile(BaseModel):
