@@ -18,30 +18,30 @@ class SpecParameter(BaseModel):
 
 
 class SpecVar(BaseModel):
-    kind: str
+    kind: Literal["Var"]
     text: str
     location: SpecLocation
 
 
 class SpecFunction(BaseModel):
-    kind: str
+    kind: Literal["Function"]
     parameters: list[SpecParameter]
-    value: 'SpecTerm'
+    value: "SpecTerm"
     location: SpecLocation
 
 
 class SpecCall(BaseModel):
-    kind: str
-    calee: 'SpecTerm'
-    arguments: list['SpecTerm']
+    kind: Literal["Call"]
+    calee: "SpecTerm"
+    arguments: list["SpecTerm"]
     location: SpecLocation
 
 
 class SpecLet(BaseModel):
-    kind: str
+    kind: Literal["Let"]
     name: SpecParameter
-    value: 'SpecTerm'
-    next: 'SpecTerm'
+    value: "SpecTerm"
+    next: "SpecTerm"
     location: SpecLocation
 
 
@@ -52,7 +52,7 @@ class SpecStr(BaseModel):
 
 
 class SpecInt(BaseModel):
-    kind: str
+    kind: Literal["Int"]
     value: float
     location: SpecLocation
 
@@ -74,66 +74,66 @@ class SpecBinaryOp(Enum):
 
 
 class SpecBool(BaseModel):
-    kind: str
+    kind: Literal["Bool"]
     value: bool
     location: SpecLocation
 
 
 class SpecIf(BaseModel):
-    kind: str
-    condition: 'SpecTerm'
-    then: 'SpecTerm'
-    otherwise: 'SpecTerm'
+    kind: Literal["If"]
+    condition: "SpecTerm"
+    then: "SpecTerm"
+    otherwise: "SpecTerm"
     location: SpecLocation
 
 
 class SpecBinary(BaseModel):
-    kind: str
-    lhs: 'SpecTerm'
+    kind: Literal["Binary"]
+    lhs: "SpecTerm"
     op: SpecBinaryOp
-    rhs: 'SpecTerm'
+    rhs: "SpecTerm"
     location: SpecLocation
 
 
 class SpecTuple(BaseModel):
-    kind: str
-    first: 'SpecTerm'
-    second: 'SpecTerm'
+    kind: Literal["Tuple"]
+    first: "SpecTerm"
+    second: "SpecTerm"
     location: SpecLocation
 
 
 class SpecFirst(BaseModel):
-    kind: str
-    value: 'SpecTerm'
+    kind: Literal["First"]
+    value: "SpecTerm"
     location: SpecLocation
 
 
 class SpecSecond(BaseModel):
-    kind: str
-    value: 'SpecTerm'
+    kind: Literal["Second"]
+    value: "SpecTerm"
     location: SpecLocation
 
 
 class SpecPrint(BaseModel):
     kind: Literal["Print"]
-    value: 'SpecTerm'
+    value: "SpecTerm"
     location: SpecLocation
 
 
-SpecTerm = (  # noqa
+SpecTerm = (
     SpecInt
     | SpecStr
-    # | SpecCall
-    # | SpecBinary
-    # | SpecFunction
-    # | SpecLet
-    # | SpecIf
+    | SpecCall
+    | SpecBinary
+    | SpecFunction
+    | SpecLet
+    | SpecIf
     | SpecPrint
-    # | SpecFirst
-    # | SpecSecond
-    # | SpecBool
-    # | SpecTuple
-    # | SpecVar
+    | SpecFirst
+    | SpecSecond
+    | SpecBool
+    | SpecTuple
+    | SpecVar
 )
 
 
