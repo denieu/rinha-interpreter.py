@@ -141,3 +141,9 @@ class SpecFile(BaseModel):
     name: str
     expression: SpecTerm
     location: SpecLocation
+
+
+SpecEvaluateBasicReturn = int | float | str | bool
+
+
+SpecEvaluateReturn = SpecEvaluateBasicReturn | tuple["SpecEvaluateReturn", "SpecEvaluateReturn"]

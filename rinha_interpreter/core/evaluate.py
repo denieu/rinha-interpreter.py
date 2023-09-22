@@ -1,7 +1,9 @@
 from rinha_interpreter.core.spec import (
     SpecBinary,
+    SpecBinaryOp,
     SpecBool,
     SpecCall,
+    SpecEvaluateReturn,
     SpecFirst,
     SpecFunction,
     SpecIf,
@@ -12,11 +14,11 @@ from rinha_interpreter.core.spec import (
     SpecStr,
     SpecTerm,
     SpecTuple,
-    SpecVar, SpecBinaryOp,
+    SpecVar,
 )
 
 
-def evaluate(term: SpecTerm) -> int | tuple | None:
+def evaluate(term: SpecTerm) -> SpecEvaluateReturn:
     if isinstance(term, SpecInt):
         return int(term.value)
 
