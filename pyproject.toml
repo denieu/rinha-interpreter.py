@@ -1,0 +1,74 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rinha-interpreter"
+description = ""
+readme = "README.md"
+authors = [
+    { name = "Daniel Wojcickoski", email = "wdenieu@gmail.com" },
+]
+requires-python = ">=3.11"
+dynamic = ["version"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "taskipy==1.11.0",
+]
+lint = [
+    "isort==5.12.0",
+    "black==23.3.0",
+    "pylint==2.17.4",
+    "mypy==1.4.0",
+]
+build = [
+    "build==0.10.0",
+    "twine==4.0.2"
+]
+test = [
+    "pytest==7.3.2",
+    "pytest-cov==4.1.0",
+]
+
+[project.scripts]
+rinha-interpreter = "rinha_interpreter.main:app"
+
+[tool.hatch.build]
+directory = "rinha_interpreter"
+
+[tool.hatch.version]
+path = "rinha_interpreter/__version__.py"
+
+[tool.isort]
+profile = "black"
+line_length = 130
+
+[tool.black]
+line_length = 130
+
+[tool.pylint]
+errors-only = true
+
+[tool.pytest.ini_options]
+pythonpath = "."
+
+[tool.taskipy.settings]
+use_vars = true
+
+[tool.taskipy.variables]
+code_path = "rinha_interpreter"
+
+[tool.taskipy.tasks]
+"lint:isort" = { cmd = "python -m isort --check --diff --color .", help = "Linter to verify the consistency of the imports according to the PEP" }
+"lint:black" = { cmd = "python -m black --check --diff --color .", help = "Linter to verify code format/style" }
+"lint:pylint" = { cmd = "python -m pylint {code_path}", help = "Linter to verify errors in the code" }
+"lint:mypy" = { cmd = "python -m mypy {code_path}", help = "Linter to verify checks consistency of type hints" }
+"lint" = { cmd = "task lint:isort && task lint:black && task lint:pylint && task lint:mypy", help = "Execute isort, black, pylint and mypy linters" }
+"lint:fix:isort" = { cmd = "python -m isort .", help = "Automatically correct errors pointed out by linter isort" }
+"lint:fix:black" = { cmd = "python -m black .", help = "Automatically correct errors pointed out by linter black" }
+"lint:fix" = { cmd = "task lint:fix:isort && task lint:fix:black", help = "Automatically correct errors pointed out by isort and black linter" }
+"build:package" = { cmd = "python -m build", help = "Build whl package to install or deploy in package registry" }
+"test" = { cmd = "python -m pytest --cov={code_path} -vv", help = "Execute tests with code coverage" }
+"test:cov:html" = { cmd = "task test && python -m coverage html", help = "Execute tests and generates an html code coverage report" }
