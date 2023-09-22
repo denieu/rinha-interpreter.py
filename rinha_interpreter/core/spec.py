@@ -1,10 +1,9 @@
 # pylint: disable=invalid-name, function-redefined
 # mypy: disable-error-code="no-redef"
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel
-
-SpecTerm = BaseModel
 
 
 class SpecLocation(BaseModel):
@@ -27,27 +26,27 @@ class SpecVar(BaseModel):
 class SpecFunction(BaseModel):
     kind: str
     parameters: list[SpecParameter]
-    value: SpecTerm
+    value: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecCall(BaseModel):
     kind: str
-    calee: SpecTerm
-    arguments: list[SpecTerm]
+    calee: 'SpecTerm'
+    arguments: list['SpecTerm']
     location: SpecLocation
 
 
 class SpecLet(BaseModel):
     kind: str
     name: SpecParameter
-    value: SpecTerm
-    next: SpecTerm
+    value: 'SpecTerm'
+    next: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecStr(BaseModel):
-    kind: str
+    kind: Literal["Str"]
     value: str
     location: SpecLocation
 
@@ -82,59 +81,59 @@ class SpecBool(BaseModel):
 
 class SpecIf(BaseModel):
     kind: str
-    condition: SpecTerm
-    then: SpecTerm
-    otherwise: SpecTerm
+    condition: 'SpecTerm'
+    then: 'SpecTerm'
+    otherwise: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecBinary(BaseModel):
     kind: str
-    lhs: SpecTerm
+    lhs: 'SpecTerm'
     op: SpecBinaryOp
-    rhs: SpecTerm
+    rhs: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecTuple(BaseModel):
     kind: str
-    first: SpecTerm
-    second: SpecTerm
+    first: 'SpecTerm'
+    second: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecFirst(BaseModel):
     kind: str
-    value: SpecTerm
+    value: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecSecond(BaseModel):
     kind: str
-    value: SpecTerm
+    value: 'SpecTerm'
     location: SpecLocation
 
 
 class SpecPrint(BaseModel):
-    kind: str
-    value: SpecTerm
+    kind: Literal["Print"]
+    value: 'SpecTerm'
     location: SpecLocation
 
 
 SpecTerm = (  # noqa
     SpecInt
     | SpecStr
-    | SpecCall
-    | SpecBinary
-    | SpecFunction
-    | SpecLet
-    | SpecIf
+    # | SpecCall
+    # | SpecBinary
+    # | SpecFunction
+    # | SpecLet
+    # | SpecIf
     | SpecPrint
-    | SpecFirst
-    | SpecSecond
-    | SpecBool
-    | SpecTuple
-    | SpecVar
+    # | SpecFirst
+    # | SpecSecond
+    # | SpecBool
+    # | SpecTuple
+    # | SpecVar
 )
 
 
