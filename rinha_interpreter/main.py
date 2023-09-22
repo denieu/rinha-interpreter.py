@@ -19,7 +19,7 @@ def version_callback(value: bool) -> None:
 
 @app.command()
 def main(
-    ast_path: Annotated[str, Argument(help="Path to rinha AST JSON")],
+    json_path: Annotated[str, Argument(help="Path to rinha AST JSON")],
     _: Annotated[Optional[bool], Option("--version", help="Show CLI version", callback=version_callback, is_eager=True)] = None,
 ) -> None:
     raise typer_exit(ExitCodesEnum.SUCCESS)
