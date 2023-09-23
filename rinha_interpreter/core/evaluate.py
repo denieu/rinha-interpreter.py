@@ -181,7 +181,7 @@ def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
         else:
             raise Exception("Tipo invalido no print")
 
-        return None
+        return spec_print_result
 
     if isinstance(term, SpecFirst):
         spec_first_result = evaluate(term.value, variables)

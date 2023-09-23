@@ -150,5 +150,4 @@ SpecEvaluateReturn = (
     SpecEvaluateBasicReturn
     | tuple["SpecEvaluateReturn", "SpecEvaluateReturn"]
     | Callable[[list["SpecEvaluateReturn"]], "SpecEvaluateReturn"]
-    | None
 )
