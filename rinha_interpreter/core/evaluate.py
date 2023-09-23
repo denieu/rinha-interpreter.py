@@ -1,3 +1,4 @@
+from rinha_interpreter.core.environment import Environment
 from rinha_interpreter.core.spec import (
     SpecBinary,
     SpecBinaryOp,
@@ -18,29 +19,7 @@ from rinha_interpreter.core.spec import (
 )
 
 
-class Variables:
-    def __init__(self) -> None:
-        self._variables: list[dict[str, SpecEvaluateReturn]] = [{}]
-
-    def start_scope(self) -> None:
-        self._variables.append({})
-
-    def finish_scope(self) -> None:
-        if len(self._variables) > 1:
-            self._variables.pop()
-
-    def set_variable(self, name: str, value: SpecEvaluateReturn) -> None:
-        self._variables[-1][name] = value
-
-    def get_variable(self, name: str) -> SpecEvaluateReturn:
-        for scope in reversed(self._variables):
-            if name in scope:
-                return scope[name]
-
-        raise Exception(f"Variavel {name} não definida")
-
-
-def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
+def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
     if isinstance(term, SpecInt):
         return int(term.value)
 
@@ -48,8 +27,8 @@ def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
         return str(term.value)
 
     if isinstance(term, SpecCall):
-        spec_call_args = [evaluate(argument, variables) for argument in term.arguments]
-        spec_call_callee = evaluate(term.callee, variables)
+        spec_call_args = [evaluate(argument, environment) for argument in term.arguments]
+        spec_call_callee = evaluate(term.callee, environment)
 
         if callable(spec_call_callee):
             return spec_call_callee(spec_call_args)
@@ -57,8 +36,8 @@ def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
         raise Exception("Invalid callable")
 
     if isinstance(term, SpecBinary):
-        spec_binary_lhs_result = evaluate(term.lhs, variables)
-        spec_binary_rhs_result = evaluate(term.rhs, variables)
+        spec_binary_lhs_result = evaluate(term.lhs, environment)
+        spec_binary_rhs_result = evaluate(term.rhs, environment)
 
         spec_binary_operator = term.op
         if spec_binary_operator == SpecBinaryOp.Add:
@@ -133,35 +112,35 @@ def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
     if isinstance(term, SpecFunction):
 
         def closure(args: list[SpecEvaluateReturn]) -> SpecEvaluateReturn:
-            variables.start_scope()
+            environment.start_scope()
 
             for index, parameter in enumerate(term.parameters):
                 parameter_name = parameter.text
                 parameter_value = args[index]
 
-                variables.set_variable(parameter_name, parameter_value)
+                environment.set_variable(parameter_name, parameter_value)
 
-            result = evaluate(term.value, variables)
-            variables.finish_scope()
+            result = evaluate(term.value, environment)
+            environment.finish_scope()
 
             return result
 
         return closure
 
     if isinstance(term, SpecLet):
-        variables.set_variable(term.name.text, evaluate(term.value, variables))
-        return evaluate(term.next, variables)
+        environment.set_variable(term.name.text, evaluate(term.value, environment))
+        return evaluate(term.next, environment)
 
     if isinstance(term, SpecIf):
-        spec_if_condition_result = evaluate(term.condition, variables)
+        spec_if_condition_result = evaluate(term.condition, environment)
 
         if spec_if_condition_result:
-            return evaluate(term.then, variables)
+            return evaluate(term.then, environment)
 
-        return evaluate(term.otherwise, variables)
+        return evaluate(term.otherwise, environment)
 
     if isinstance(term, SpecPrint):
-        spec_print_result = evaluate(term.value, variables)
+        spec_print_result = evaluate(term.value, environment)
 
         if isinstance(spec_print_result, str):
             print(spec_print_result)
@@ -184,14 +163,14 @@ def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
         return spec_print_result
 
     if isinstance(term, SpecFirst):
-        spec_first_result = evaluate(term.value, variables)
+        spec_first_result = evaluate(term.value, environment)
         if not isinstance(spec_first_result, tuple):
             raise Exception("Esperava que isso fosse uma tupla")
 
         return spec_first_result[0]
 
     if isinstance(term, SpecSecond):
-        spec_second_result = evaluate(term.value, variables)
+        spec_second_result = evaluate(term.value, environment)
         if not isinstance(spec_second_result, tuple):
             raise Exception("Esperava que isso fosse uma tupla")
 
@@ -201,9 +180,9 @@ def evaluate(term: SpecTerm, variables: Variables) -> SpecEvaluateReturn:
         return bool(term.value)
 
     if isinstance(term, SpecTuple):
-        return evaluate(term.first, variables), evaluate(term.second, variables)
+        return evaluate(term.first, environment), evaluate(term.second, environment)
 
     if isinstance(term, SpecVar):
-        return variables.get_variable(term.text)
+        return environment.get_variable(term.text)
 
     raise Exception("Term invalido")
