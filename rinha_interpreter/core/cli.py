@@ -26,7 +26,8 @@ def get_console() -> Console:
 
 
 def typer_exit(code: ExitCodesEnum) -> Exit:
-    color = "green" if code == ExitCodesEnum.SUCCESS else "red"
+    if code != ExitCodesEnum.SUCCESS:
+        color = "red"
+        get_console().print(f"\n[{color} bold]Exit status {code.value} {code.name}[/]")
 
-    get_console().print(f"\n[{color} bold]Exit status {code.value} {code.name}[/]")
     return Exit(code.value)
