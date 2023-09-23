@@ -20,13 +20,15 @@ from rinha_interpreter.core.spec import (
 
 
 def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
-    if isinstance(term, SpecInt):
+    term_type = type(term)
+
+    if term_type == SpecInt:
         return int(term.value)
 
-    if isinstance(term, SpecStr):
+    if term_type == SpecStr:
         return str(term.value)
 
-    if isinstance(term, SpecCall):
+    if term_type == SpecCall:
         spec_call_args = [evaluate(argument, environment) for argument in term.arguments]
         spec_call_callee = evaluate(term.callee, environment)
 
@@ -46,7 +48,7 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
 
         return result
 
-    if isinstance(term, SpecBinary):
+    if term_type == SpecBinary:
         spec_binary_lhs_result = evaluate(term.lhs, environment)
         spec_binary_rhs_result = evaluate(term.rhs, environment)
 
@@ -120,14 +122,14 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
         if spec_binary_operator == SpecBinaryOp.Or:
             return spec_binary_lhs_result or spec_binary_rhs_result
 
-    if isinstance(term, SpecFunction):
+    if term_type == SpecFunction:
         return term
 
-    if isinstance(term, SpecLet):
+    if term_type == SpecLet:
         environment.set_variable(term.name.text, evaluate(term.value, environment))
         return evaluate(term.next, environment)
 
-    if isinstance(term, SpecIf):
+    if term_type == SpecIf:
         spec_if_condition_result = evaluate(term.condition, environment)
 
         if spec_if_condition_result:
@@ -135,7 +137,7 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
 
         return evaluate(term.otherwise, environment)
 
-    if isinstance(term, SpecPrint):
+    if term_type == SpecPrint:
         spec_print_result = evaluate(term.value, environment)
 
         if isinstance(spec_print_result, str):
@@ -158,27 +160,27 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
 
         return spec_print_result
 
-    if isinstance(term, SpecFirst):
+    if term_type == SpecFirst:
         spec_first_result = evaluate(term.value, environment)
         if not isinstance(spec_first_result, tuple):
             raise Exception("Esperava que isso fosse uma tupla")
 
         return spec_first_result[0]
 
-    if isinstance(term, SpecSecond):
+    if term_type == SpecSecond:
         spec_second_result = evaluate(term.value, environment)
         if not isinstance(spec_second_result, tuple):
             raise Exception("Esperava que isso fosse uma tupla")
 
         return spec_second_result[1]
 
-    if isinstance(term, SpecBool):
+    if term_type == SpecBool:
         return bool(term.value)
 
-    if isinstance(term, SpecTuple):
+    if term_type == SpecTuple:
         return evaluate(term.first, environment), evaluate(term.second, environment)
 
-    if isinstance(term, SpecVar):
+    if term_type == SpecVar:
         return environment.get_variable(term.text)
 
     raise Exception("Term invalido")
