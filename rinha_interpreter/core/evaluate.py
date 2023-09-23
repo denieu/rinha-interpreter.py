@@ -29,20 +29,20 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
         return str(term.value)
 
     if term_type == SpecCall:
-        spec_call_args = [evaluate(argument, environment) for argument in term.arguments]
         spec_call_callee = evaluate(term.callee, environment)
-
         if not isinstance(spec_call_callee, SpecFunction):
             raise Exception("Invalid callable")
 
-        environment.start_scope()
-
+        new_scope = {}
         for index, parameter in enumerate(spec_call_callee.parameters):
+            argument = term.arguments[index]
+
             parameter_name = parameter.text
-            parameter_value = spec_call_args[index]
+            parameter_value = evaluate(argument, environment)
 
-            environment.set_variable(parameter_name, parameter_value)
+            new_scope[parameter_name] = parameter_value
 
+        environment.start_scope(new_scope)
         result = evaluate(spec_call_callee.value, environment)
         environment.finish_scope()
 

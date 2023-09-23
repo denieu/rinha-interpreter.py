@@ -5,8 +5,8 @@ class Environment:
     def __init__(self) -> None:
         self._scopes: list[dict[str, SpecEvaluateReturn]] = [{}]
 
-    def start_scope(self) -> None:
-        self._scopes.append({})
+    def start_scope(self, scope: dict[str, SpecEvaluateReturn]) -> None:
+        self._scopes.append(scope)
 
     def finish_scope(self) -> None:
         if len(self._scopes) > 1:
