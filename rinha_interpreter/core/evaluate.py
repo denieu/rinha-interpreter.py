@@ -30,10 +30,21 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
         spec_call_args = [evaluate(argument, environment) for argument in term.arguments]
         spec_call_callee = evaluate(term.callee, environment)
 
-        if callable(spec_call_callee):
-            return spec_call_callee(spec_call_args)
+        if not isinstance(spec_call_callee, SpecFunction):
+            raise Exception("Invalid callable")
 
-        raise Exception("Invalid callable")
+        environment.start_scope()
+
+        for index, parameter in enumerate(spec_call_callee.parameters):
+            parameter_name = parameter.text
+            parameter_value = spec_call_args[index]
+
+            environment.set_variable(parameter_name, parameter_value)
+
+        result = evaluate(spec_call_callee.value, environment)
+        environment.finish_scope()
+
+        return result
 
     if isinstance(term, SpecBinary):
         spec_binary_lhs_result = evaluate(term.lhs, environment)
@@ -110,22 +121,7 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
             return spec_binary_lhs_result or spec_binary_rhs_result
 
     if isinstance(term, SpecFunction):
-
-        def closure(args: list[SpecEvaluateReturn]) -> SpecEvaluateReturn:
-            environment.start_scope()
-
-            for index, parameter in enumerate(term.parameters):
-                parameter_name = parameter.text
-                parameter_value = args[index]
-
-                environment.set_variable(parameter_name, parameter_value)
-
-            result = evaluate(term.value, environment)
-            environment.finish_scope()
-
-            return result
-
-        return closure
+        return term
 
     if isinstance(term, SpecLet):
         environment.set_variable(term.name.text, evaluate(term.value, environment))
@@ -154,7 +150,7 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
         elif isinstance(spec_print_result, tuple):
             print(spec_print_result)
 
-        elif callable(spec_print_result):
+        elif isinstance(spec_print_result, SpecFunction):
             print("<#closure>")
 
         else:
