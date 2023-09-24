@@ -1,9 +1,9 @@
 # pylint: disable=invalid-name, function-redefined
 # mypy: disable-error-code="no-redef"
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SpecLocation(BaseModel):
@@ -120,21 +120,24 @@ class SpecPrint(BaseModel):
     location: SpecLocation
 
 
-SpecTerm = (
-    SpecInt
-    | SpecStr
-    | SpecCall
-    | SpecBinary
-    | SpecFunction
-    | SpecLet
-    | SpecIf
-    | SpecPrint
-    | SpecFirst
-    | SpecSecond
-    | SpecBool
-    | SpecTuple
-    | SpecVar
-)
+SpecTerm = Annotated[
+    (
+        SpecInt
+        | SpecStr
+        | SpecCall
+        | SpecBinary
+        | SpecFunction
+        | SpecLet
+        | SpecIf
+        | SpecPrint
+        | SpecFirst
+        | SpecSecond
+        | SpecBool
+        | SpecTuple
+        | SpecVar
+    ),
+    Field(discriminator="kind"),
+]
 
 
 class SpecFile(BaseModel):
