@@ -42,7 +42,8 @@ def value_to_print(value: SpecEvaluateReturn, return_comma_on_str: bool = False)
         return str(value).lower()
 
     if isinstance(value, str):
-        return value if not return_comma_on_str else f'"{value}"'
+        result = f'"{value}"' if return_comma_on_str else value
+        return result
 
     if isinstance(value, (int, float)):
         return str(value)
@@ -53,7 +54,8 @@ def value_to_print(value: SpecEvaluateReturn, return_comma_on_str: bool = False)
         lhs_to_display = value_to_print(lhs_value, return_comma_on_str=True)
         rhs_to_display = value_to_print(rhs_value, return_comma_on_str=True)
 
-        return f"({lhs_to_display}, {rhs_to_display})"
+        result = f"({lhs_to_display}, {rhs_to_display})"
+        return result
 
     if isinstance(value, dict) and value.get("kind") == "Function":
         return "<#closure>"

@@ -2,3 +2,6 @@
 /output.cprof
 /source.rinha.json
 /source.rinha
+*.c
+*.so
+*.o
