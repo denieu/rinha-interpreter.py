@@ -1,3 +1,5 @@
+from typing import Callable
+
 from rinha_interpreter.core.environment import Environment
 from rinha_interpreter.core.spec import (
     SpecBinary,
@@ -17,6 +19,27 @@ from rinha_interpreter.core.spec import (
     SpecTuple,
     SpecVar,
 )
+
+
+binary_operators: dict[SpecBinaryOp, Callable[[SpecEvaluateReturn, SpecEvaluateReturn], bool]] = {
+    SpecBinaryOp.Add: lambda _lhs, _rhs: f"{_lhs}{_rhs}" if isinstance(_lhs, str) or isinstance(_rhs, str) else _lhs + _rhs,
+    SpecBinaryOp.Sub: lambda _lhs, _rhs: _lhs - _rhs,
+    SpecBinaryOp.Mul: lambda _lhs, _rhs: _lhs * _rhs,
+    SpecBinaryOp.Div: lambda _lhs, _rhs: _lhs / _rhs,
+    SpecBinaryOp.Rem: lambda _lhs, _rhs: _lhs % _rhs,
+    SpecBinaryOp.Eq: lambda _lhs, _rhs: _lhs == _rhs,
+    SpecBinaryOp.Neq: lambda _lhs, _rhs: _lhs != _rhs,
+    SpecBinaryOp.Lt: lambda _lhs, _rhs: _lhs < _rhs,
+    SpecBinaryOp.Gt: lambda _lhs, _rhs: _lhs > _rhs,
+    SpecBinaryOp.Lte: lambda _lhs, _rhs: _lhs <= _rhs,
+    SpecBinaryOp.Gte: lambda _lhs, _rhs: _lhs >= _rhs,
+    SpecBinaryOp.And: lambda _lhs, _rhs: _lhs and _rhs,
+    SpecBinaryOp.Or: lambda _lhs, _rhs: _lhs or _rhs,
+}
+
+
+def evaluate_binary_operator(operator: SpecBinaryOp, lhs: SpecEvaluateReturn, rhs: SpecEvaluateReturn) -> bool:
+    return binary_operators[operator](lhs, rhs)
 
 
 def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
@@ -49,78 +72,7 @@ def evaluate(term: SpecTerm, environment: Environment) -> SpecEvaluateReturn:
         return result
 
     if term_type == SpecBinary:
-        spec_binary_lhs_result = evaluate(term.lhs, environment)
-        spec_binary_rhs_result = evaluate(term.rhs, environment)
-
-        spec_binary_operator = term.op
-        if spec_binary_operator == SpecBinaryOp.Add:
-            if isinstance(spec_binary_lhs_result, str) or isinstance(spec_binary_rhs_result, str):
-                return f"{spec_binary_lhs_result}{spec_binary_rhs_result}"
-
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result + spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Sub:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result - spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Mul:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result * spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Div:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result / spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Rem:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result % spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Eq:
-            return spec_binary_lhs_result == spec_binary_rhs_result
-
-        if spec_binary_operator == SpecBinaryOp.Neq:
-            return spec_binary_lhs_result != spec_binary_rhs_result
-
-        if spec_binary_operator == SpecBinaryOp.Lt:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result < spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Gt:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result > spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Lte:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result <= spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.Gte:
-            if isinstance(spec_binary_lhs_result, (int, float)) and isinstance(spec_binary_rhs_result, (int, float)):
-                return spec_binary_lhs_result >= spec_binary_rhs_result
-
-            raise Exception("Operação binario invalida")
-
-        if spec_binary_operator == SpecBinaryOp.And:
-            return spec_binary_lhs_result and spec_binary_rhs_result
-
-        if spec_binary_operator == SpecBinaryOp.Or:
-            return spec_binary_lhs_result or spec_binary_rhs_result
+        return evaluate_binary_operator(term.op, evaluate(term.lhs, environment), evaluate(term.rhs, environment))
 
     if term_type == SpecFunction:
         return term
