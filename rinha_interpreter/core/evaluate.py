@@ -42,7 +42,7 @@ def _eval_spec_int(_term: SpecInt, _environment: Environment) -> int:
 
 
 def _eval_spec_str(_term: SpecStr, _environment: Environment) -> str:
-    return int(_term.value)
+    return str(_term.value)
 
 
 def _eval_spec_call(_term: SpecCall, _environment: Environment) -> SpecEvaluateReturn:
