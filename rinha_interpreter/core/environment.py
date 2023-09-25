@@ -1,9 +1,13 @@
-from rinha_interpreter.core.spec import SpecEvaluateReturn
+from collections import deque
+
+from rinha_interpreter.core.spec import SpecEvaluateReturn, SpecTerm, AuxSpecTerm
 
 
 class Environment:
     def __init__(self) -> None:
         self._scopes: list[dict[str, SpecEvaluateReturn]] = [{}]
+        self._terms: list[SpecTerm | AuxSpecTerm] = []
+        self._results: list[SpecEvaluateReturn] = []
 
     def start_scope(self, scope: dict[str, SpecEvaluateReturn]) -> None:
         self._scopes.append(scope)
@@ -21,3 +25,17 @@ class Environment:
                 return scope[name]
 
         raise Exception(f"Variavel {name} não definida")
+
+    def add_term_to_evaluate(self, term: SpecTerm | AuxSpecTerm) -> None:
+        self._terms.append(term)
+
+    def get_term_to_evaluate(self) -> SpecTerm | AuxSpecTerm:
+        if self._terms :
+            return self._terms.pop()
+        return None
+
+    def save_evaluate_result(self, result: SpecEvaluateReturn) -> None:
+        self._results.append(result)
+
+    def get_evaluate_result(self) -> SpecEvaluateReturn:
+        return self._results.pop()

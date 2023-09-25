@@ -146,7 +146,17 @@ class SpecFile(BaseModel):
     location: SpecLocation
 
 
+AuxSpecTerm = Literal[
+    "AuxSpecCallStart",
+    "AuxSpecCallFinish",
+    "AuxSpecBinaryFinish",
+    "AuxSpecLetSet",
+    "AuxSpecIfHandleCondition",
+    "AuxSpecPrintFinish",
+    "AuxSpecFirstFinish",
+    "AuxSpecSecondFinish",
+    "AuxSpecTupleFinish",
+]
+
 SpecEvaluateBasicReturn = int | float | str | bool
-
-
 SpecEvaluateReturn = SpecEvaluateBasicReturn | SpecFunction | tuple["SpecEvaluateReturn", "SpecEvaluateReturn"]
