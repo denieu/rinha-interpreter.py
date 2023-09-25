@@ -28,7 +28,9 @@ def main(
     ast = parse_ast(json_path)
 
     environment = Environment()
-    evaluate(ast.expression, environment)
+    environment.add_term_to_evaluate(ast.expression)
+
+    evaluate(environment)
 
     raise typer_exit(ExitCodesEnum.SUCCESS)
 
