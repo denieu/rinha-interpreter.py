@@ -38,16 +38,15 @@ spec_binary_ops: dict[SpecBinaryOp, Callable[[SpecEvaluateReturn, SpecEvaluateRe
 
 
 def _eval_spec_int(_term: SpecInt, _environment: Environment) -> None:
-    _environment.save_evaluate_result(int(_term["value"]))
+    _environment.save_evaluate_result(_term["value"])
 
 
 def _eval_spec_str(_term: SpecStr, _environment: Environment) -> None:
-    _environment.save_evaluate_result(str(_term["value"]))
+    _environment.save_evaluate_result(_term["value"])
 
 
 def _eval_spec_call(_term: SpecCall, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecCallStart"})
-
     _environment.add_term_to_evaluate(_term["callee"])
     for argument in _term["arguments"]:
         _environment.add_term_to_evaluate(argument)
@@ -62,12 +61,10 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
     for parameter in spec_call_callee["parameters"]:
         parameter_name = parameter["text"]
         parameter_value = _environment.get_evaluate_result()
-
         new_scope[parameter_name] = parameter_value
 
     _environment.start_scope(new_scope)
     _environment.add_term_to_evaluate({"kind": "AuxSpecCallFinish"})
-
     _environment.add_term_to_evaluate(spec_call_callee["value"])
 
 
@@ -77,20 +74,17 @@ def _eval_aux_spec_call_finish(_term: Literal["AuxSpecCallFinish"], _environment
 
 def _eval_spec_binary(_term: SpecBinary, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecBinaryFinish"})
-
-    _environment.save_evaluate_result(_term["op"])
-
     _environment.add_term_to_evaluate(_term["lhs"])
     _environment.add_term_to_evaluate(_term["rhs"])
+    _environment.save_evaluate_result(_term)
 
 
 def _eval_aux_spec_binary_finish(_term: Literal["AuxSpecBinaryFinish"], _environment: Environment) -> None:
     lhs_value = _environment.get_evaluate_result()
     rhs_value = _environment.get_evaluate_result()
+    spec_binary: SpecBinary = _environment.get_evaluate_result()
 
-    op_value = _environment.get_evaluate_result()
-
-    _environment.save_evaluate_result(spec_binary_ops[op_value](lhs_value, rhs_value))
+    _environment.save_evaluate_result(spec_binary_ops[spec_binary["op"]](lhs_value, rhs_value))
 
 
 def _eval_spec_function(_term: SpecFunction, _environment: Environment) -> None:
@@ -99,41 +93,29 @@ def _eval_spec_function(_term: SpecFunction, _environment: Environment) -> None:
 
 def _eval_spec_let(_term: SpecLet, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecLetSet"})
-
-    _environment.save_evaluate_result(_term["name"]["text"])
-    _environment.save_evaluate_result(_term["next"])
-
     _environment.add_term_to_evaluate(_term["value"])
+    _environment.save_evaluate_result(_term)
 
 
 def _eval_aux_spec_let_set(_term: Literal["AuxSpecLetSet"], _environment: Environment) -> None:
     let_value = _environment.get_evaluate_result()
-    let_next = _environment.get_evaluate_result()
-    let_name = _environment.get_evaluate_result()
+    spec_let: SpecLet = _environment.get_evaluate_result()
 
-    _environment.set_variable(let_name, let_value)
-    _environment.add_term_to_evaluate(let_next)
+    _environment.set_variable(spec_let["name"]["text"], let_value)
+    _environment.add_term_to_evaluate(spec_let["next"])
 
 
 def _eval_spec_if(_term: SpecIf, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecIfHandleCondition"})
-
-    _environment.save_evaluate_result(_term["otherwise"])
-    _environment.save_evaluate_result(_term["then"])
-
     _environment.add_term_to_evaluate(_term["condition"])
+    _environment.save_evaluate_result(_term)
 
 
 def _eval_aux_spec_if_handle_condition(_term: Literal["AuxSpecIfHandleCondition"], _environment: Environment) -> None:
-    condition_result = _environment.get_evaluate_result()
+    condition_result: bool = _environment.get_evaluate_result()
+    spec_if: SpecIf = _environment.get_evaluate_result()
 
-    spec_if_then = _environment.get_evaluate_result()
-    spec_if_otherwise = _environment.get_evaluate_result()
-
-    if condition_result:
-        _environment.add_term_to_evaluate(spec_if_then)
-    else:
-        _environment.add_term_to_evaluate(spec_if_otherwise)
+    _environment.add_term_to_evaluate(spec_if["then"] if condition_result else spec_if["otherwise"])
 
 
 def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> int:
