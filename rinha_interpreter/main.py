@@ -28,7 +28,7 @@ def main(
     ast = parse_ast(json_path)
 
     environment = Environment()
-    environment.add_term_to_evaluate(ast.expression)
+    environment.add_term_to_evaluate(ast["expression"])
 
     evaluate(environment)
 

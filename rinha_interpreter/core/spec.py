@@ -1,43 +1,40 @@
 # pylint: disable=invalid-name, function-redefined
 # mypy: disable-error-code="no-redef"
-from enum import Enum
-from typing import Annotated, Literal
-
-from pydantic import BaseModel, Field
+from typing import Literal, TypedDict
 
 
-class SpecLocation(BaseModel):
+class SpecLocation(TypedDict):
     start: int
     end: int
     filename: str
 
 
-class SpecParameter(BaseModel):
+class SpecParameter(TypedDict):
     text: str
     location: SpecLocation
 
 
-class SpecVar(BaseModel):
+class SpecVar(TypedDict):
     kind: Literal["Var"]
     text: str
     location: SpecLocation
 
 
-class SpecFunction(BaseModel):
+class SpecFunction(TypedDict):
     kind: Literal["Function"]
     parameters: list[SpecParameter]
     value: "SpecTerm"
     location: SpecLocation
 
 
-class SpecCall(BaseModel):
+class SpecCall(TypedDict):
     kind: Literal["Call"]
     callee: "SpecTerm"
     arguments: list["SpecTerm"]
     location: SpecLocation
 
 
-class SpecLet(BaseModel):
+class SpecLet(TypedDict):
     kind: Literal["Let"]
     name: SpecParameter
     value: "SpecTerm"
@@ -45,13 +42,13 @@ class SpecLet(BaseModel):
     location: SpecLocation
 
 
-class SpecStr(BaseModel):
+class SpecStr(TypedDict):
     kind: Literal["Str"]
     value: str
     location: SpecLocation
 
 
-class SpecInt(BaseModel):
+class SpecInt(TypedDict):
     kind: Literal["Int"]
     value: float
     location: SpecLocation
@@ -60,13 +57,13 @@ class SpecInt(BaseModel):
 SpecBinaryOp = Literal["Add", "Sub", "Mul", "Div", "Rem", "Eq", "Neq", "Lt", "Gt", "Lte", "Gte", "And", "Or"]
 
 
-class SpecBool(BaseModel):
+class SpecBool(TypedDict):
     kind: Literal["Bool"]
     value: bool
     location: SpecLocation
 
 
-class SpecIf(BaseModel):
+class SpecIf(TypedDict):
     kind: Literal["If"]
     condition: "SpecTerm"
     then: "SpecTerm"
@@ -74,7 +71,7 @@ class SpecIf(BaseModel):
     location: SpecLocation
 
 
-class SpecBinary(BaseModel):
+class SpecBinary(TypedDict):
     kind: Literal["Binary"]
     lhs: "SpecTerm"
     op: SpecBinaryOp
@@ -82,52 +79,49 @@ class SpecBinary(BaseModel):
     location: SpecLocation
 
 
-class SpecTuple(BaseModel):
+class SpecTuple(TypedDict):
     kind: Literal["Tuple"]
     first: "SpecTerm"
     second: "SpecTerm"
     location: SpecLocation
 
 
-class SpecFirst(BaseModel):
+class SpecFirst(TypedDict):
     kind: Literal["First"]
     value: "SpecTerm"
     location: SpecLocation
 
 
-class SpecSecond(BaseModel):
+class SpecSecond(TypedDict):
     kind: Literal["Second"]
     value: "SpecTerm"
     location: SpecLocation
 
 
-class SpecPrint(BaseModel):
+class SpecPrint(TypedDict):
     kind: Literal["Print"]
     value: "SpecTerm"
     location: SpecLocation
 
 
-SpecTerm = Annotated[
-    (
-        SpecInt
-        | SpecStr
-        | SpecCall
-        | SpecBinary
-        | SpecFunction
-        | SpecLet
-        | SpecIf
-        | SpecPrint
-        | SpecFirst
-        | SpecSecond
-        | SpecBool
-        | SpecTuple
-        | SpecVar
-    ),
-    Field(discriminator="kind"),
-]
+SpecTerm = (
+    SpecInt
+    | SpecStr
+    | SpecCall
+    | SpecBinary
+    | SpecFunction
+    | SpecLet
+    | SpecIf
+    | SpecPrint
+    | SpecFirst
+    | SpecSecond
+    | SpecBool
+    | SpecTuple
+    | SpecVar
+)
 
 
-class SpecFile(BaseModel):
+class SpecFile(TypedDict):
     name: str
     expression: SpecTerm
     location: SpecLocation
