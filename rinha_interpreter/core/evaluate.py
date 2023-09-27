@@ -59,7 +59,7 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
         raise Exception("Invalid callable")
 
     new_scope = {}
-    for index, parameter in enumerate(spec_call_callee["parameters"]):
+    for parameter in spec_call_callee["parameters"]:
         parameter_name = parameter["text"]
         parameter_value = _environment.get_evaluate_result()
 

@@ -1,5 +1,3 @@
-from collections import deque
-
 from rinha_interpreter.core.spec import AuxSpecTerm, SpecEvaluateReturn, SpecTerm
 
 
