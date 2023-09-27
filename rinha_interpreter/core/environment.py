@@ -1,6 +1,6 @@
 from collections import deque
 
-from rinha_interpreter.core.spec import SpecEvaluateReturn, SpecTerm, AuxSpecTerm
+from rinha_interpreter.core.spec import AuxSpecTerm, SpecEvaluateReturn, SpecTerm
 
 
 class Environment:
@@ -30,7 +30,7 @@ class Environment:
         self._terms.append(term)
 
     def get_term_to_evaluate(self) -> SpecTerm | AuxSpecTerm:
-        if self._terms :
+        if self._terms:
             return self._terms.pop()
         return None
 
