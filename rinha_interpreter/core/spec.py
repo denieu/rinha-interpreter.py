@@ -57,20 +57,7 @@ class SpecInt(BaseModel):
     location: SpecLocation
 
 
-class SpecBinaryOp(Enum):
-    Add = "Add"
-    Sub = "Sub"
-    Mul = "Mul"
-    Div = "Div"
-    Rem = "Rem"
-    Eq = "Eq"
-    Neq = "Neq"
-    Lt = "Lt"
-    Gt = "Gt"
-    Lte = "Lte"
-    Gte = "Gte"
-    And = "And"
-    Or = "Or"
+SpecBinaryOp = Literal["Add", "Sub", "Mul", "Div", "Rem", "Eq", "Neq", "Lt", "Gt", "Lte", "Gte", "And", "Or"]
 
 
 class SpecBool(BaseModel):

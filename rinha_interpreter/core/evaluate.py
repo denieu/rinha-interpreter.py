@@ -21,19 +21,19 @@ from rinha_interpreter.core.spec import (
 )
 
 spec_binary_ops: dict[SpecBinaryOp, Callable[[SpecEvaluateReturn, SpecEvaluateReturn], bool]] = {
-    SpecBinaryOp.Add: lambda _lhs, _rhs: f"{_lhs}{_rhs}" if isinstance(_lhs, str) or isinstance(_rhs, str) else _lhs + _rhs,
-    SpecBinaryOp.Sub: lambda _lhs, _rhs: _lhs - _rhs,
-    SpecBinaryOp.Mul: lambda _lhs, _rhs: _lhs * _rhs,
-    SpecBinaryOp.Div: lambda _lhs, _rhs: _lhs / _rhs,
-    SpecBinaryOp.Rem: lambda _lhs, _rhs: _lhs % _rhs,
-    SpecBinaryOp.Eq: lambda _lhs, _rhs: _lhs == _rhs,
-    SpecBinaryOp.Neq: lambda _lhs, _rhs: _lhs != _rhs,
-    SpecBinaryOp.Lt: lambda _lhs, _rhs: _lhs < _rhs,
-    SpecBinaryOp.Gt: lambda _lhs, _rhs: _lhs > _rhs,
-    SpecBinaryOp.Lte: lambda _lhs, _rhs: _lhs <= _rhs,
-    SpecBinaryOp.Gte: lambda _lhs, _rhs: _lhs >= _rhs,
-    SpecBinaryOp.And: lambda _lhs, _rhs: _lhs and _rhs,
-    SpecBinaryOp.Or: lambda _lhs, _rhs: _lhs or _rhs,
+    "Add": lambda _lhs, _rhs: f"{_lhs}{_rhs}" if isinstance(_lhs, str) or isinstance(_rhs, str) else _lhs + _rhs,
+    "Sub": lambda _lhs, _rhs: _lhs - _rhs,
+    "Mul": lambda _lhs, _rhs: _lhs * _rhs,
+    "Div": lambda _lhs, _rhs: _lhs / _rhs,
+    "Rem": lambda _lhs, _rhs: _lhs % _rhs,
+    "Eq": lambda _lhs, _rhs: _lhs == _rhs,
+    "Neq": lambda _lhs, _rhs: _lhs != _rhs,
+    "Lt": lambda _lhs, _rhs: _lhs < _rhs,
+    "Gt": lambda _lhs, _rhs: _lhs > _rhs,
+    "Lte": lambda _lhs, _rhs: _lhs <= _rhs,
+    "Gte": lambda _lhs, _rhs: _lhs >= _rhs,
+    "And": lambda _lhs, _rhs: _lhs and _rhs,
+    "Or": lambda _lhs, _rhs: _lhs or _rhs,
 }
 
 
