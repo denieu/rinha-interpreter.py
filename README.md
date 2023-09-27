@@ -16,5 +16,5 @@ docker build . -f Dockerfile -t rinha-interpreter
 Para executar a imagem Docker:
 ```bash
 # Substitua o caminho "$(pwd)/files/fib.json" pelo arquivo(AST json) que desejar
-docker run -v $(pwd)/files/fib.json:/var/rinha/source.json rinha-interpreter
+docker run -v $(pwd)/files/fib.json:/var/rinha/source.rinha.json rinha-interpreter
 ```
