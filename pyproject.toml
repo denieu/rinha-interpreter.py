@@ -25,10 +25,6 @@ lint = [
     "pylint==2.17.4",
     "mypy==1.4.0",
 ]
-build = [
-    "build==0.10.0",
-    "twine==4.0.2"
-]
 test = [
     "pytest==7.3.2",
     "pytest-cov==4.1.0",
@@ -105,6 +101,5 @@ code_path = "rinha_interpreter"
 "lint:fix:isort" = { cmd = "python -m isort .", help = "Automatically correct errors pointed out by linter isort" }
 "lint:fix:black" = { cmd = "python -m black .", help = "Automatically correct errors pointed out by linter black" }
 "lint:fix" = { cmd = "task lint:fix:isort && task lint:fix:black", help = "Automatically correct errors pointed out by isort and black linter" }
-"build:package" = { cmd = "python -m build", help = "Build whl package to install or deploy in package registry" }
 "test" = { cmd = "python -m pytest --cov={code_path} -vv", help = "Execute tests with code coverage" }
 "test:cov:html" = { cmd = "task test && python -m coverage html", help = "Execute tests and generates an html code coverage report" }
