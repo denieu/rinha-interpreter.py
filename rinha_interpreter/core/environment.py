@@ -3,26 +3,23 @@ from rinha_interpreter.core.spec import AuxSpecTerm, SpecEvaluateReturn, SpecTer
 
 class Environment:
     def __init__(self) -> None:
-        self._scopes: list[dict[str, SpecEvaluateReturn]] = [{}]
+        self._scopes: list[dict[str, SpecEvaluateReturn]] = []
+        self._scope: dict[str, SpecEvaluateReturn] = {}
         self._terms: list[SpecTerm | AuxSpecTerm] = []
         self._results: list[SpecEvaluateReturn] = []
 
     def start_scope(self, scope: dict[str, SpecEvaluateReturn]) -> None:
-        self._scopes.append(scope)
+        self._scopes.append(self._scope.copy())
+        self._scope.update(scope)
 
     def finish_scope(self) -> None:
-        if len(self._scopes) > 1:
-            self._scopes.pop()
+        self._scope = self._scopes.pop()
 
     def set_variable(self, name: str, value: SpecEvaluateReturn) -> None:
-        self._scopes[-1][name] = value
+        self._scope[name] = value
 
     def get_variable(self, name: str) -> SpecEvaluateReturn:
-        for scope in reversed(self._scopes):
-            if name in scope:
-                return scope[name]
-
-        raise Exception(f"Variavel {name} não definida")
+        return self._scope[name]
 
     def add_term_to_evaluate(self, term: SpecTerm | AuxSpecTerm) -> None:
         self._terms.append(term)
