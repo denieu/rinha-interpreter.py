@@ -137,27 +137,30 @@ def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> int:
     _environment.add_term_to_evaluate(_term["value"])
 
 
+def value_to_print(value: SpecEvaluateReturn) -> str:
+    if isinstance(value, (str, int, float)):
+        return value
+
+    if isinstance(value, bool):
+        return str(value).lower()
+
+    if isinstance(value, tuple):
+        lhs_value, rhs_value = value
+
+        lhs_to_display = value_to_print(lhs_value)
+        rhs_to_display = value_to_print(rhs_value)
+
+        return f"({lhs_to_display}, {rhs_to_display})"
+
+    if isinstance(value, dict) and value.get("kind") == "Function":
+        return "<#closure>"
+
+    raise Exception("Tipo invalido no print")
+
+
 def _eval_aux_spec_print_finish(_term: Literal["AuxSpecPrintFinish"], _environment: Environment) -> None:
     spec_print_result = _environment.get_evaluate_result()
-
-    if isinstance(spec_print_result, str):
-        print(spec_print_result)
-
-    elif isinstance(spec_print_result, (int, float)):
-        print(spec_print_result)
-
-    elif isinstance(spec_print_result, bool):
-        print(str(spec_print_result).lower())
-
-    elif isinstance(spec_print_result, tuple):
-        print(spec_print_result)
-
-    elif isinstance(spec_print_result, SpecFunction):
-        print("<#closure>")
-
-    else:
-        raise Exception("Tipo invalido no print")
-
+    print(value_to_print(spec_print_result))
     _environment.save_evaluate_result(spec_print_result)
 
 
