@@ -7,6 +7,7 @@ class Environment:
         self._scope: dict[str, SpecEvaluateReturn] = {}
         self._terms: list[SpecTerm | AuxSpecTerm] = []
         self._results: list[SpecEvaluateReturn] = []
+        self._cache: dict[str, SpecEvaluateReturn] = {}
 
     def start_scope(self, scope: dict[str, SpecEvaluateReturn]) -> None:
         self._scopes.append(self._scope.copy())
@@ -35,3 +36,9 @@ class Environment:
 
     def get_evaluate_result(self) -> SpecEvaluateReturn:
         return self._results.pop()
+
+    def set_cache(self, key: str, value: SpecEvaluateReturn) -> None:
+        self._cache[key] = value
+
+    def get_cache(self, key: str) -> SpecEvaluateReturn:
+        return self._cache.get(key)

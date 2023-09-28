@@ -63,12 +63,26 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
         parameter_value = _environment.get_evaluate_result()
         new_scope[parameter_name] = parameter_value
 
-    _environment.start_scope(new_scope)
-    _environment.add_term_to_evaluate({"kind": "AuxSpecCallFinish"})
-    _environment.add_term_to_evaluate(spec_call_callee["value"])
+    cache_key = f"{spec_call_callee}{new_scope}"
+    if (cache_result := _environment.get_cache(cache_key)) is not None:
+        _environment.save_evaluate_result(cache_result)
+
+    else:
+        _environment.start_scope(new_scope)
+
+        _environment.add_term_to_evaluate({"kind": "AuxSpecCallFinish"})
+        _environment.add_term_to_evaluate(spec_call_callee["value"])
+
+        _environment.save_evaluate_result(cache_key)
 
 
 def _eval_aux_spec_call_finish(_term: Literal["AuxSpecCallFinish"], _environment: Environment) -> None:
+    spec_callee_result = _environment.get_evaluate_result()
+    cache_key = _environment.get_evaluate_result()
+
+    _environment.save_evaluate_result(spec_callee_result)
+    _environment.set_cache(cache_key, spec_callee_result)
+
     _environment.finish_scope()
 
 
