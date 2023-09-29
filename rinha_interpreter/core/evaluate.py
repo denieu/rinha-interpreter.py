@@ -37,6 +37,30 @@ spec_binary_ops: dict[SpecBinaryOp, Callable[[Any, Any], SpecEvaluateBasicReturn
 }
 
 
+def value_to_print(value: SpecEvaluateReturn, return_comma_on_str: bool = False) -> str:
+    if isinstance(value, bool):
+        return str(value).lower()
+
+    if isinstance(value, str):
+        return value if not return_comma_on_str else f'"{value}"'
+
+    if isinstance(value, (int, float)):
+        return str(value)
+
+    if isinstance(value, tuple):
+        lhs_value, rhs_value = value
+
+        lhs_to_display = value_to_print(lhs_value, return_comma_on_str=True)
+        rhs_to_display = value_to_print(rhs_value, return_comma_on_str=True)
+
+        return f"({lhs_to_display}, {rhs_to_display})"
+
+    if isinstance(value, dict) and value.get("kind") == "Function":
+        return "<#closure>"
+
+    raise Exception("Tipo invalido no print")
+
+
 def _eval_spec_int(_term: SpecInt, _environment: Environment) -> None:
     _environment.save_evaluate_result(_term["value"])
 
@@ -64,24 +88,25 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
         new_scope[parameter_name] = parameter_value
 
     cache_key = f"{spec_call_callee}{_environment._scope}{new_scope}"
-    if (cache_result := _environment.get_cache(cache_key)) is not None:
+
+    if (cache_result := _environment.get_call_cache(cache_key)) is not None:
         _environment.save_evaluate_result(cache_result)
 
+        if (cache_stdout := _environment.get_stdout_cache()) is not None:
+            print(value_to_print(cache_stdout))
+
     else:
-        _environment.start_scope(new_scope)
+        _environment.start_scope(new_scope, cache_key)
 
         _environment.add_term_to_evaluate({"kind": "AuxSpecCallFinish"})
         _environment.add_term_to_evaluate(spec_call_callee["value"])
 
-        _environment.save_evaluate_result(cache_key)
-
 
 def _eval_aux_spec_call_finish(_term: Literal["AuxSpecCallFinish"], _environment: Environment) -> None:
     spec_callee_result = _environment.get_evaluate_result()
-    cache_key = _environment.get_evaluate_result()
 
     _environment.save_evaluate_result(spec_callee_result)
-    _environment.set_cache(cache_key, spec_callee_result)
+    _environment.set_call_cache(spec_callee_result)
 
     _environment.finish_scope()
 
@@ -137,33 +162,13 @@ def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> None:
     _environment.add_term_to_evaluate(_term["value"])
 
 
-def value_to_print(value: SpecEvaluateReturn, return_comma_on_str: bool = False) -> str:
-    if isinstance(value, bool):
-        return str(value).lower()
-
-    if isinstance(value, str):
-        return value if not return_comma_on_str else f'"{value}"'
-
-    if isinstance(value, (int, float)):
-        return str(value)
-
-    if isinstance(value, tuple):
-        lhs_value, rhs_value = value
-
-        lhs_to_display = value_to_print(lhs_value, return_comma_on_str=True)
-        rhs_to_display = value_to_print(rhs_value, return_comma_on_str=True)
-
-        return f"({lhs_to_display}, {rhs_to_display})"
-
-    if isinstance(value, dict) and value.get("kind") == "Function":
-        return "<#closure>"
-
-    raise Exception("Tipo invalido no print")
-
-
 def _eval_aux_spec_print_finish(_term: Literal["AuxSpecPrintFinish"], _environment: Environment) -> None:
     spec_print_result = _environment.get_evaluate_result()
-    print(value_to_print(spec_print_result))
+    printable = value_to_print(spec_print_result)
+
+    print(printable)
+
+    _environment.append_to_stdout_cache(printable)
     _environment.save_evaluate_result(spec_print_result)
 
 
