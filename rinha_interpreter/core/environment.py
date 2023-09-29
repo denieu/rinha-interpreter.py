@@ -1,3 +1,5 @@
+from typing import Any
+
 from rinha_interpreter.core.spec import AuxSpecTerm, SpecEvaluateReturn, SpecTerm
 
 
@@ -6,8 +8,8 @@ class Environment:
         self._scopes: list[dict[str, SpecEvaluateReturn]] = []
         self._scope: dict[str, SpecEvaluateReturn] = {}
         self._terms: list[SpecTerm | AuxSpecTerm] = []
-        self._results: list[SpecEvaluateReturn] = []
-        self._cache: dict[str, SpecEvaluateReturn] = {}
+        self._results: list[Any] = []
+        self._cache: dict[str, Any] = {}
 
     def start_scope(self, scope: dict[str, SpecEvaluateReturn]) -> None:
         self._scopes.append(self._scope.copy())
@@ -25,20 +27,20 @@ class Environment:
     def add_term_to_evaluate(self, term: SpecTerm | AuxSpecTerm) -> None:
         self._terms.append(term)
 
-    def get_term_to_evaluate(self) -> SpecTerm | AuxSpecTerm:
+    def get_term_to_evaluate(self) -> SpecTerm | AuxSpecTerm | None:
         try:
             return self._terms.pop()
         except IndexError:
             return None
 
-    def save_evaluate_result(self, result: SpecEvaluateReturn) -> None:
+    def save_evaluate_result(self, result: Any) -> None:
         self._results.append(result)
 
-    def get_evaluate_result(self) -> SpecEvaluateReturn:
+    def get_evaluate_result(self) -> Any:
         return self._results.pop()
 
-    def set_cache(self, key: str, value: SpecEvaluateReturn) -> None:
+    def set_cache(self, key: str, value: Any) -> None:
         self._cache[key] = value
 
-    def get_cache(self, key: str) -> SpecEvaluateReturn:
+    def get_cache(self, key: str) -> Any:
         return self._cache.get(key)

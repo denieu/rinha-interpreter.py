@@ -1,4 +1,4 @@
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 
 from rinha_interpreter.core.environment import Environment
 from rinha_interpreter.core.spec import (
@@ -6,6 +6,7 @@ from rinha_interpreter.core.spec import (
     SpecBinaryOp,
     SpecBool,
     SpecCall,
+    SpecEvaluateBasicReturn,
     SpecEvaluateReturn,
     SpecFirst,
     SpecFunction,
@@ -15,12 +16,11 @@ from rinha_interpreter.core.spec import (
     SpecPrint,
     SpecSecond,
     SpecStr,
-    SpecTerm,
     SpecTuple,
     SpecVar,
 )
 
-spec_binary_ops: dict[SpecBinaryOp, Callable[[SpecEvaluateReturn, SpecEvaluateReturn], bool]] = {
+spec_binary_ops: dict[SpecBinaryOp, Callable[[Any, Any], SpecEvaluateBasicReturn]] = {
     "Add": lambda _lhs, _rhs: f"{_lhs}{_rhs}" if isinstance(_lhs, str) or isinstance(_rhs, str) else _lhs + _rhs,
     "Sub": lambda _lhs, _rhs: _lhs - _rhs,
     "Mul": lambda _lhs, _rhs: _lhs * _rhs,
@@ -132,14 +132,14 @@ def _eval_aux_spec_if_handle_condition(_term: Literal["AuxSpecIfHandleCondition"
     _environment.add_term_to_evaluate(spec_if["then"] if condition_result else spec_if["otherwise"])
 
 
-def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> int:
+def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecPrintFinish"})
     _environment.add_term_to_evaluate(_term["value"])
 
 
 def value_to_print(value: SpecEvaluateReturn) -> str:
     if isinstance(value, (str, int, float)):
-        return value
+        return str(value)
 
     if isinstance(value, bool):
         return str(value).lower()
@@ -213,7 +213,7 @@ def _eval_spec_var(_term: SpecVar, _environment: Environment) -> None:
     _environment.save_evaluate_result(_environment.get_variable(_term["text"]))
 
 
-spec_terms: dict[SpecTerm, Callable[[SpecTerm, Environment], SpecEvaluateReturn]] = {
+spec_terms: dict[str, Callable[[Any, Environment], None]] = {
     "Int": _eval_spec_int,
     "Str": _eval_spec_str,
     "Call": _eval_spec_call,
@@ -239,6 +239,6 @@ spec_terms: dict[SpecTerm, Callable[[SpecTerm, Environment], SpecEvaluateReturn]
 }
 
 
-def evaluate(environment: Environment) -> SpecEvaluateReturn:
+def evaluate(environment: Environment) -> None:
     while (term := environment.get_term_to_evaluate()) is not None:
         spec_terms[term["kind"]](term, environment)
