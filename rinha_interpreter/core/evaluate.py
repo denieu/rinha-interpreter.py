@@ -63,7 +63,7 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
         parameter_value = _environment.get_evaluate_result()
         new_scope[parameter_name] = parameter_value
 
-    cache_key = f"{spec_call_callee}{new_scope}"
+    cache_key = f"{spec_call_callee}{_environment._scope}{new_scope}"
     if (cache_result := _environment.get_cache(cache_key)) is not None:
         _environment.save_evaluate_result(cache_result)
 
