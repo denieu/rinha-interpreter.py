@@ -30,8 +30,8 @@ class Environment:
         old_scope_cache_key = self._scope_cache_key
         self._scope_cache_key = self._scope_cache_keys.pop()
 
-        if self._scope_cache_key:
-            self._cache_stdout[self._scope_cache_key] += self._cache_stdout[old_scope_cache_key]
+        if old_scope_cache_key and old_scope_cache_key in self._cache_stdout:
+            self.append_to_stdout_cache(self._cache_stdout[old_scope_cache_key])
 
     def set_variable(self, name: str, value: SpecEvaluateReturn) -> None:
         self._scope[name] = value
