@@ -206,13 +206,13 @@ def _eval_spec_bool(_term: SpecBool, _environment: Environment) -> None:
 
 def _eval_spec_tuple(_term: SpecTuple, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecTupleFinish"})
-    _environment.add_term_to_evaluate(_term["first"])
     _environment.add_term_to_evaluate(_term["second"])
+    _environment.add_term_to_evaluate(_term["first"])
 
 
 def _eval_aux_spec_tuple_finish(_term: Literal["AuxSpecTupleFinish"], _environment: Environment) -> None:
-    tuple_first = _environment.get_evaluate_result()
     tuple_second = _environment.get_evaluate_result()
+    tuple_first = _environment.get_evaluate_result()
 
     _environment.save_evaluate_result((tuple_first, tuple_second))
 
