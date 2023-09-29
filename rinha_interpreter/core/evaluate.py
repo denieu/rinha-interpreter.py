@@ -72,7 +72,7 @@ def _eval_spec_str(_term: SpecStr, _environment: Environment) -> None:
 def _eval_spec_call(_term: SpecCall, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecCallStart"})
     _environment.add_term_to_evaluate(_term["callee"])
-    for argument in _term["arguments"]:
+    for argument in reversed(_term["arguments"]):
         _environment.add_term_to_evaluate(argument)
 
 
@@ -82,7 +82,7 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
         raise Exception("Invalid callable")
 
     new_scope = {}
-    for parameter in spec_call_callee["parameters"]:
+    for parameter in reversed(spec_call_callee["parameters"]):
         parameter_name = parameter["text"]
         parameter_value = _environment.get_evaluate_result()
         new_scope[parameter_name] = parameter_value
