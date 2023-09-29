@@ -137,18 +137,21 @@ def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> None:
     _environment.add_term_to_evaluate(_term["value"])
 
 
-def value_to_print(value: SpecEvaluateReturn) -> str:
-    if isinstance(value, (str, int, float)):
-        return str(value)
-
+def value_to_print(value: SpecEvaluateReturn, return_comma_on_str: bool = False) -> str:
     if isinstance(value, bool):
         return str(value).lower()
+
+    if isinstance(value, str):
+        return value if not return_comma_on_str else f'"{value}"'
+
+    if isinstance(value, (int, float)):
+        return str(value)
 
     if isinstance(value, tuple):
         lhs_value, rhs_value = value
 
-        lhs_to_display = value_to_print(lhs_value)
-        rhs_to_display = value_to_print(rhs_value)
+        lhs_to_display = value_to_print(lhs_value, return_comma_on_str=True)
+        rhs_to_display = value_to_print(rhs_value, return_comma_on_str=True)
 
         return f"({lhs_to_display}, {rhs_to_display})"
 
