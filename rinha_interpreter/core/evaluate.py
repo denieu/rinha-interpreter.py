@@ -113,14 +113,14 @@ def _eval_aux_spec_call_finish(_term: Literal["AuxSpecCallFinish"], _environment
 
 def _eval_spec_binary(_term: SpecBinary, _environment: Environment) -> None:
     _environment.add_term_to_evaluate({"kind": "AuxSpecBinaryFinish"})
-    _environment.add_term_to_evaluate(_term["lhs"])
     _environment.add_term_to_evaluate(_term["rhs"])
+    _environment.add_term_to_evaluate(_term["lhs"])
     _environment.save_evaluate_result(_term)
 
 
 def _eval_aux_spec_binary_finish(_term: Literal["AuxSpecBinaryFinish"], _environment: Environment) -> None:
-    lhs_value = _environment.get_evaluate_result()
     rhs_value = _environment.get_evaluate_result()
+    lhs_value = _environment.get_evaluate_result()
     spec_binary: SpecBinary = _environment.get_evaluate_result()
 
     _environment.save_evaluate_result(spec_binary_ops[spec_binary["op"]](lhs_value, rhs_value))
