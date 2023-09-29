@@ -1,3 +1,4 @@
+from sys import set_int_max_str_digits
 from typing import Annotated, Optional
 
 from typer import Argument, Exit, Option, Typer
@@ -8,6 +9,7 @@ from rinha_interpreter.core.environment import Environment
 from rinha_interpreter.core.evaluate import evaluate
 from rinha_interpreter.core.parser import parse_ast
 
+set_int_max_str_digits(0)
 app = Typer(
     name="rinha-interpreter",
     help="",
