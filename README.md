@@ -2,11 +2,11 @@
 
 # Introdução
 
-Interpretador da liguagem exotica rinha escrito em 🐍 Python.
+Interpretador da liguagem exotica rinha escrito em 🐍 Python
 
-Para saber mais sobre a linguagem ou sobre a Rinha de Compiler da uma olhada [aqui](https://github.com/aripiprazole/rinha-de-compiler).
+⚠️⚠️⚠️Código para fins didaticos, não use em produção ⚠️⚠️⚠️
 
-⚠️⚠️⚠️Esse código não é nem um pouco pensado para produção, problemas existem e foram mantidos propositalmente visando performance ⚠️⚠️⚠️.
+Para saber mais sobre a linguagem ou sobre a Rinha de Compiler da uma olhada [aqui](https://github.com/aripiprazole/rinha-de-compiler)
 
 ## Ideia do Interpretador
 
