@@ -69,5 +69,5 @@ class Environment:
         else:
             self._cache_stdout[self._scope_cache_key] += value
 
-    def get_stdout_cache(self) -> str | None:
-        return self._cache_stdout.get(self._scope_cache_key)
+    def get_stdout_cache(self, key: str) -> str | None:
+        return self._cache_stdout.get(key)

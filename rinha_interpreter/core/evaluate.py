@@ -92,8 +92,8 @@ def _eval_aux_spec_call_start(_term: Literal["AuxSpecCallStart"], _environment: 
     if (cache_result := _environment.get_call_cache(cache_key)) is not None:
         _environment.save_evaluate_result(cache_result)
 
-        if (cache_stdout := _environment.get_stdout_cache()) is not None:
-            print(value_to_print(cache_stdout))
+        if (cache_stdout := _environment.get_stdout_cache(cache_key)) is not None:
+            print(value_to_print(cache_stdout), end="")
 
     else:
         _environment.start_scope(new_scope, cache_key)
@@ -164,9 +164,9 @@ def _eval_spec_print(_term: SpecPrint, _environment: Environment) -> None:
 
 def _eval_aux_spec_print_finish(_term: Literal["AuxSpecPrintFinish"], _environment: Environment) -> None:
     spec_print_result = _environment.get_evaluate_result()
-    printable = value_to_print(spec_print_result)
+    printable = value_to_print(spec_print_result) + "\n"
 
-    print(printable)
+    print(printable, end="")
 
     _environment.append_to_stdout_cache(printable)
     _environment.save_evaluate_result(spec_print_result)
